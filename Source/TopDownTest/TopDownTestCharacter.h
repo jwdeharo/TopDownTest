@@ -24,7 +24,33 @@ public:
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
+	/**
+	* Moves the player in his forward direction.
+	* @param AxisValue: Value of the axis input.
+	*/
+	void MoveForward(float AxisValue);
+
+	/**
+	* Moves the player in his right direction.
+	* @param AxisValue: Value of the axis input.
+	*/
+	void MoveRight(float AxisValue);
+
+	/**
+	* Given a location, the function rotates the player to look at that location.
+	* @param: Location: touch location.
+	*/
+	void RotateToLocation(const FVector& Location);
+
 private:
+
+	/**
+	* Given an axis value and an axis type, this function moves the player.
+	* @param AxisValue: Value of the axis input.
+	* @param AxisType: Enum value that indicates the axis.
+	*/
+	void Move(float AxisValue, EAxis::Type AxisType);
+
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;

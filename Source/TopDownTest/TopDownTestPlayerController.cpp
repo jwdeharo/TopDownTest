@@ -40,22 +40,20 @@ void ATopDownTestPlayerController::SetupInputComponent()
 
 void ATopDownTestPlayerController::MoveForward(float AxisValue)
 {
-	Move(AxisValue, EAxis::X);
+	ATopDownTestCharacter* MyPawn = Cast<ATopDownTestCharacter>(GetPawn());
+	if (MyPawn != nullptr)
+	{
+		MyPawn->MoveForward(AxisValue);
+	}
 }
 
 void ATopDownTestPlayerController::MoveRight(float AxisValue)
 {
-	Move(AxisValue, EAxis::Y);
-}
-
-void ATopDownTestPlayerController::Move(float AxisValue, EAxis::Type AxisType)
-{
 	ATopDownTestCharacter* MyPawn = Cast<ATopDownTestCharacter>(GetPawn());
-	FRotator Rotation = MyPawn->GetControlRotation();
-	FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
-
-	FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(AxisType);
-	MyPawn->AddMovementInput(Direction, AxisValue);
+	if (MyPawn != nullptr)
+	{
+		MyPawn->MoveRight(AxisValue);
+	}
 }
 
 void ATopDownTestPlayerController::ChangeCanRotateLocation()
@@ -73,26 +71,22 @@ void ATopDownTestPlayerController::ChangePlayerRotation()
 		{
 			if (MyPawn->GetCursorToWorld())
 			{
-				RotateToLocation(MyPawn->GetCursorToWorld()->GetComponentLocation());
+				MyPawn->RotateToLocation(MyPawn->GetCursorToWorld()->GetComponentLocation());
 			}
 		}
 	}
 	else
 	{
-		// Trace to see what is under the mouse cursor
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-		if (Hit.bBlockingHit)
+		ATopDownTestCharacter* MyPawn = Cast<ATopDownTestCharacter>(GetPawn());
+		if (MyPawn != nullptr)
 		{
-			RotateToLocation(Hit.ImpactPoint);
+			FHitResult Hit;
+			GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+			if (Hit.bBlockingHit)
+			{
+				MyPawn->RotateToLocation(Hit.ImpactPoint);
+			}
 		}
 	}
-}
-
-void ATopDownTestPlayerController::RotateToLocation(const FVector& Location)
-{
-	const FRotator& FindLookAt = UKismetMathLibrary::FindLookAtRotation(GetPawn()->GetActorLocation(), Location);
-	FRotator LookAtRotation = FRotator(0.f, FindLookAt.Yaw, 0.f);
-	GetPawn()->SetActorRotation(LookAtRotation);
 }

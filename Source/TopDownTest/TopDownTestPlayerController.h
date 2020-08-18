@@ -50,13 +50,6 @@ private:
 	void MoveRight(float AxisValue);
 
 	/**
-	* Given an axis value and an axis type, this function moves the player.
-	* @param AxisValue: Value of the axis input.
-	* @param AxisType: Enum value that indicates the axis.
-	*/
-	void Move(float AxisValue, EAxis::Type AxisType);
-
-	/**
 	* Changes if the player can rotate to a location.
 	*/
 	void ChangeCanRotateLocation();
@@ -66,13 +59,7 @@ private:
 	*/
 	void ChangePlayerRotation();
 
-	/**
-	* Given a location, the function rotates the player to look at that location.
-	* @param: Location: touch location.
-	*/
-	void RotateToLocation(const FVector& Location);
-
-	bool bCanRotateToLocation; //!< Indicates if the player can rotate to location.
+	bool bCanRotateToLocation; //!< Indicates that the character can look at the location.
 };
 
 
