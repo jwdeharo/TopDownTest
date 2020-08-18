@@ -1,9 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "TopDownTestPlayerController.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "Runtime/Engine/Classes/Components/DecalComponent.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "TopDownTestCharacter.h"
 #include "Engine/World.h"
 
@@ -16,97 +11,32 @@ ATopDownTestPlayerController::ATopDownTestPlayerController()
 void ATopDownTestPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
-	// keep updating the destination every tick while desired
-	if (bMoveToMouseCursor)
-	{
-		MoveToMouseCursor();
-	}
 }
 
 void ATopDownTestPlayerController::SetupInputComponent()
 {
-	// set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ATopDownTestPlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &ATopDownTestPlayerController::OnSetDestinationReleased);
-
-	// support touch devices 
-	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ATopDownTestPlayerController::MoveToTouchLocation);
-	InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ATopDownTestPlayerController::MoveToTouchLocation);
-
-	InputComponent->BindAction("ResetVR", IE_Pressed, this, &ATopDownTestPlayerController::OnResetVR);
+	InputComponent->BindAxis("MoveForward", this, &ATopDownTestPlayerController::MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &ATopDownTestPlayerController::MoveRight);
 }
 
-void ATopDownTestPlayerController::OnResetVR()
+void ATopDownTestPlayerController::MoveForward(float AxisValue)
 {
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+	Move(AxisValue, EAxis::X);
 }
 
-void ATopDownTestPlayerController::MoveToMouseCursor()
+void ATopDownTestPlayerController::MoveRight(float AxisValue)
 {
-	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
-	{
-		if (ATopDownTestCharacter* MyPawn = Cast<ATopDownTestCharacter>(GetPawn()))
-		{
-			if (MyPawn->GetCursorToWorld())
-			{
-				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, MyPawn->GetCursorToWorld()->GetComponentLocation());
-			}
-		}
-	}
-	else
-	{
-		// Trace to see what is under the mouse cursor
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-		if (Hit.bBlockingHit)
-		{
-			// We hit something, move there
-			SetNewMoveDestination(Hit.ImpactPoint);
-		}
-	}
+	Move(AxisValue, EAxis::Y);
 }
 
-void ATopDownTestPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location)
+void ATopDownTestPlayerController::Move(float AxisValue, EAxis::Type AxisType)
 {
-	FVector2D ScreenSpaceLocation(Location);
+	ATopDownTestCharacter* MyPawn = Cast<ATopDownTestCharacter>(GetPawn());
+	FRotator Rotation = MyPawn->GetControlRotation();
+	FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
-	// Trace to see what is under the touch location
-	FHitResult HitResult;
-	GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
-	if (HitResult.bBlockingHit)
-	{
-		// We hit something, move there
-		SetNewMoveDestination(HitResult.ImpactPoint);
-	}
-}
-
-void ATopDownTestPlayerController::SetNewMoveDestination(const FVector DestLocation)
-{
-	APawn* const MyPawn = GetPawn();
-	if (MyPawn)
-	{
-		float const Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
-
-		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if ((Distance > 120.0f))
-		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
-		}
-	}
-}
-
-void ATopDownTestPlayerController::OnSetDestinationPressed()
-{
-	// set flag to keep updating destination until released
-	bMoveToMouseCursor = true;
-}
-
-void ATopDownTestPlayerController::OnSetDestinationReleased()
-{
-	// clear flag to indicate we should stop updating the destination
-	bMoveToMouseCursor = false;
+	FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(AxisType);
+	MyPawn->AddMovementInput(Direction, AxisValue);
 }

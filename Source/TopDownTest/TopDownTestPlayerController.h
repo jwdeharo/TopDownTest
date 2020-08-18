@@ -1,43 +1,55 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "TopDownTestPlayerController.generated.h"
 
+/**
+* Controller that handles the inputs of the player.
+*/
 UCLASS()
 class ATopDownTestPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
+	/**
+	* Default constructor of the class.
+	*/
 	ATopDownTestPlayerController();
 
 protected:
-	/** True if the controlled character should navigate to the mouse cursor. */
-	uint32 bMoveToMouseCursor : 1;
+	/**
+	* Updates the player every frame.
+	* @param DeltaTime: time of the game.
+	*/
+	void PlayerTick(float DeltaTime) override;
 
-	// Begin PlayerController interface
-	virtual void PlayerTick(float DeltaTime) override;
+	/**
+	* Setups the input that the controller will handle.
+	*/
 	virtual void SetupInputComponent() override;
-	// End PlayerController interface
 
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
+private:
 
-	/** Navigate player to the current mouse cursor location. */
-	void MoveToMouseCursor();
+	/**
+	* Moves the player in his forward direction.
+	* @param AxisValue: Value of the axis input.
+	*/
+	void MoveForward(float AxisValue);
 
-	/** Navigate player to the current touch location. */
-	void MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location);
-	
-	/** Navigate player to the given world location. */
-	void SetNewMoveDestination(const FVector DestLocation);
+	/**
+	* Moves the player in his right direction.
+	* @param AxisValue: Value of the axis input.
+	*/
+	void MoveRight(float AxisValue);
 
-	/** Input handlers for SetDestination action. */
-	void OnSetDestinationPressed();
-	void OnSetDestinationReleased();
+	/**
+	* Given an axis value and an axis type, this function moves the player.
+	* @param AxisValue: Value of the axis input.
+	* @param AxisType: Enum value that indicates the axis.
+	*/
+	void Move(float AxisValue, EAxis::Type AxisType);
 };
 
 
