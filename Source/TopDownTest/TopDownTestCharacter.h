@@ -1,10 +1,10 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "TopDownTestCharacter.generated.h"
+
+class ABaseWeapon; //!< Forward declaration of the class ABaseWeapon.
 
 UCLASS(Blueprintable)
 class ATopDownTestCharacter : public ACharacter
@@ -14,8 +14,13 @@ class ATopDownTestCharacter : public ACharacter
 public:
 	ATopDownTestCharacter();
 
+	/**
+	* Function called at the begining of the game.
+	*/
+	void BeginPlay() override;
+
 	// Called every frame.
-	virtual void Tick(float DeltaSeconds) override;
+	void Tick(float DeltaSeconds) override;
 
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -42,6 +47,9 @@ public:
 	*/
 	void RotateToLocation(const FVector& Location);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Top Down Test Character")
+	TSubclassOf<ABaseWeapon> MainWeapon; //!< Main weapon of the character.
+
 private:
 
 	/**
@@ -50,6 +58,13 @@ private:
 	* @param AxisType: Enum value that indicates the axis.
 	*/
 	void Move(float AxisValue, EAxis::Type AxisType);
+
+	/**
+	* Attach an object to a socket.
+	* @param ObjectToAttach: object to attach.
+	* @param SocketToAttach: socket to attach the object.
+	*/
+	void AttachBlueprint(TSubclassOf<AActor> ObjectToAttach, const FName& SocketToAttach);
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

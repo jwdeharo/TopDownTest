@@ -10,6 +10,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Weapons/BaseWeapon.h"
 
 ATopDownTestCharacter::ATopDownTestCharacter()
 {
@@ -54,6 +55,12 @@ ATopDownTestCharacter::ATopDownTestCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+}
+
+void ATopDownTestCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	AttachBlueprint(MainWeapon, "GunSocket");
 }
 
 void ATopDownTestCharacter::Tick(float DeltaSeconds)
@@ -105,6 +112,15 @@ void ATopDownTestCharacter::Move(float AxisValue, EAxis::Type AxisType)
 
 	FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(AxisType);
 	AddMovementInput(Direction, AxisValue);
+}
+
+void ATopDownTestCharacter::AttachBlueprint(TSubclassOf<AActor> ObjectToAttach, const FName& SocketToAttach)
+{
+	if (ObjectToAttach != nullptr)
+	{
+		auto const SpawnedActorRef = GetWorld()->SpawnActor<AActor>(ObjectToAttach);
+		SpawnedActorRef->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), SocketToAttach);
+	}
 }
 
 void ATopDownTestCharacter::RotateToLocation(const FVector& Location)
