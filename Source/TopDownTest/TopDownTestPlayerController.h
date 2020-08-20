@@ -1,43 +1,65 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "TopDownTestPlayerController.generated.h"
 
+/**
+* Controller that handles the inputs of the player.
+*/
 UCLASS()
 class ATopDownTestPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
+	/**
+	* Default constructor of the class.
+	*/
 	ATopDownTestPlayerController();
 
 protected:
-	/** True if the controlled character should navigate to the mouse cursor. */
-	uint32 bMoveToMouseCursor : 1;
+	/**
+	* Function called at the begining of the game.
+	*/
+	void BeginPlay() override;
 
-	// Begin PlayerController interface
-	virtual void PlayerTick(float DeltaTime) override;
-	virtual void SetupInputComponent() override;
-	// End PlayerController interface
+	/**
+	* Updates the player every frame.
+	* @param DeltaTime: time of the game.
+	*/
+	void PlayerTick(float DeltaTime) override;
 
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
+	/**
+	* Setups the input that the controller will handle.
+	*/
+	void SetupInputComponent() override;
 
-	/** Navigate player to the current mouse cursor location. */
-	void MoveToMouseCursor();
+private:
 
-	/** Navigate player to the current touch location. */
-	void MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location);
-	
-	/** Navigate player to the given world location. */
-	void SetNewMoveDestination(const FVector DestLocation);
+	/**
+	* Moves the player in his forward direction.
+	* @param AxisValue: Value of the axis input.
+	*/
+	void MoveForward(float AxisValue);
 
-	/** Input handlers for SetDestination action. */
-	void OnSetDestinationPressed();
-	void OnSetDestinationReleased();
+	/**
+	* Moves the player in his right direction.
+	* @param AxisValue: Value of the axis input.
+	*/
+	void MoveRight(float AxisValue);
+
+	/**
+	* Changes if the player can rotate to a location.
+	*/
+	void ChangeCanRotateLocation();
+
+	/**
+	* Rotates the player to the touch position.
+	*/
+	void ChangePlayerRotation();
+
+	bool bCanRotateToLocation; //!< Indicates that the character can look at the location.
 };
 
 
