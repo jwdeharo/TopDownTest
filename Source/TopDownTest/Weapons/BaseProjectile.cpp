@@ -39,6 +39,7 @@ void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	CollisionComponent->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnHit);
+	IceExplosionParticleComponent->OnSystemFinished.AddDynamic(this, &ABaseProjectile::OnParticleSystemFinished);
 }
 
 void ABaseProjectile::Tick(float DeltaTime)
@@ -53,7 +54,6 @@ void ABaseProjectile::StartProjectile(const FVector& Direction)
 
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	IceExplosionParticleComponent->OnSystemFinished.AddDynamic(this, &ABaseProjectile::OnParticleSystemFinished);
 	IceShotParticleComponent->SetVisibility(false, true);
 	IceShotParticleComponent->Deactivate();
 	ProjectileMovementComponent->Deactivate();
