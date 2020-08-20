@@ -50,6 +50,12 @@ public:
 	*/
 	void Attack();
 
+	/**
+	* Sets if the character can or can't attack.
+	* @param CanAttack: true if the character can attack.
+	*/
+	void SetCanAttack(bool CanAttack);
+
 private:
 
 	/**
@@ -85,5 +91,6 @@ private:
 
 	UPROPERTY()
 	class ABaseWeapon* MainWeapon; //!< Main weapon of the character.
+	bool bCanAttack; //!< Indicates that the player can attack.
 };
 

@@ -62,6 +62,7 @@ void ATopDownTestCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	MainWeapon = AttachBlueprint<AGunWeapon>("GunSocket");
+	bCanAttack = false;
 }
 
 void ATopDownTestCharacter::Tick(float DeltaSeconds)
@@ -93,6 +94,11 @@ void ATopDownTestCharacter::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
+	}
+
+	if (bCanAttack)
+	{
+		Attack();
 	}
 }
 
@@ -128,4 +134,9 @@ void ATopDownTestCharacter::Attack()
 	{
 		MainWeapon->Attack();
 	}
+}
+
+void ATopDownTestCharacter::SetCanAttack(bool CanAttack)
+{
+	bCanAttack = CanAttack;
 }

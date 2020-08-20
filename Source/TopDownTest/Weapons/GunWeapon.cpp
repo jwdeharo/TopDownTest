@@ -23,7 +23,7 @@ void AGunWeapon::Attack()
 	{
 		auto const BaseProj = GetWorld()->SpawnActor<ABaseProjectile>(ABaseProjectile::StaticClass(), SkeletalMeshComponent->GetSocketTransform("Muzzle"));
 		BaseProj->StartProjectile(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn()->GetActorForwardVector());
-		GetWorld()->GetTimerManager().SetTimer(AttackTimerController, this, &AGunWeapon::OnAttackTimerEnded, 0.5f, true);
+		GetWorld()->GetTimerManager().SetTimer(AttackTimerController, this, &AGunWeapon::OnAttackTimerEnded, 0.3f, true);
 		StopAttack();
 	}
 }

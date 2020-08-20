@@ -19,10 +19,11 @@ ABaseProjectile::ABaseProjectile()
 	ParticleSystemComponent->SetRelativeLocation(FVector::ZeroVector);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
-	ProjectileMovementComponent->bAutoActivate = false;
+	ProjectileMovementComponent->bAutoActivate = true;
 	ProjectileMovementComponent->SetUpdatedComponent(CollisionComponent);
-	ProjectileMovementComponent->InitialSpeed = 3000.f;
-	ProjectileMovementComponent->MaxSpeed = 3000.f;
+	ProjectileMovementComponent->InitialSpeed = 1000.f;
+	ProjectileMovementComponent->MaxSpeed = 1000.f;
+	ProjectileMovementComponent->ProjectileGravityScale = 0.f;
 
 	InitialLifeSpan = 3.f;
 }
@@ -40,7 +41,6 @@ void ABaseProjectile::Tick(float DeltaTime)
 
 void ABaseProjectile::StartProjectile(const FVector& Direction)
 {
-	ProjectileMovementComponent->Activate();
 	ProjectileMovementComponent->Velocity = Direction * ProjectileMovementComponent->InitialSpeed;
 }
 
