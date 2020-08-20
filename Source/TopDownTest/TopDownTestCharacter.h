@@ -4,8 +4,6 @@
 #include "GameFramework/Character.h"
 #include "TopDownTestCharacter.generated.h"
 
-class ABaseWeapon; //!< Forward declaration of the class ABaseWeapon.
-
 UCLASS(Blueprintable)
 class ATopDownTestCharacter : public ACharacter
 {
@@ -47,8 +45,10 @@ public:
 	*/
 	void RotateToLocation(const FVector& Location);
 
-	UPROPERTY(EditDefaultsOnly, Category = "Top Down Test Character")
-	TSubclassOf<ABaseWeapon> MainWeapon; //!< Main weapon of the character.
+	/**
+	* Attacks using the main weapon.
+	*/
+	void Attack();
 
 private:
 
@@ -61,10 +61,15 @@ private:
 
 	/**
 	* Attach an object to a socket.
-	* @param ObjectToAttach: object to attach.
 	* @param SocketToAttach: socket to attach the object.
 	*/
-	void AttachBlueprint(TSubclassOf<AActor> ObjectToAttach, const FName& SocketToAttach);
+	template <typename T>
+	T* AttachBlueprint(const FName& SocketToAttach)
+	{
+		T* SpawnedActor = GetWorld()->SpawnActor<T>(T::StaticClass());
+		SpawnedActor->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), SocketToAttach);
+		return SpawnedActor;
+	}
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -77,5 +82,8 @@ private:
 	/** A decal that projects to the cursor location. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
+
+	UPROPERTY()
+	class ABaseWeapon* MainWeapon; //!< Main weapon of the character.
 };
 

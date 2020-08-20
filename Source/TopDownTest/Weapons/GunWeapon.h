@@ -29,6 +29,30 @@ public:
 	*/
 	void Attack() override;
 
+	/**
+	* Updates every frame.
+	* @param DeltaTime: time of the game.
+	*/
+	void Tick(float DeltaTime) override;
+
+	/**
+	* Stops the attack.
+	*/
+	void StopAttack();
+
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	USkeletalMeshComponent* SkeletalMeshComponent; //!< Skeletal mesh component.
+
+
+private:
+
+	/**
+	* Function called when it is possible to attack again.
+	*/
+	UFUNCTION()
+	void OnAttackTimerEnded();
+
+	FTimerHandle	AttackTimerController; //!< Timer that controls when the gun can be shoot.
+	bool CanAttack; //!< Indicates if the gun can shoot.
+
 };

@@ -11,6 +11,7 @@
 #include "Engine/World.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Weapons/BaseWeapon.h"
+#include "Weapons/GunWeapon.h"
 
 ATopDownTestCharacter::ATopDownTestCharacter()
 {
@@ -60,12 +61,12 @@ ATopDownTestCharacter::ATopDownTestCharacter()
 void ATopDownTestCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	AttachBlueprint(MainWeapon, "GunSocket");
+	MainWeapon = AttachBlueprint<AGunWeapon>("GunSocket");
 }
 
 void ATopDownTestCharacter::Tick(float DeltaSeconds)
 {
-    Super::Tick(DeltaSeconds);
+	Super::Tick(DeltaSeconds);
 
 	if (CursorToWorld != nullptr)
 	{
@@ -114,18 +115,17 @@ void ATopDownTestCharacter::Move(float AxisValue, EAxis::Type AxisType)
 	AddMovementInput(Direction, AxisValue);
 }
 
-void ATopDownTestCharacter::AttachBlueprint(TSubclassOf<AActor> ObjectToAttach, const FName& SocketToAttach)
-{
-	if (ObjectToAttach != nullptr)
-	{
-		auto const SpawnedActorRef = GetWorld()->SpawnActor<AActor>(ObjectToAttach);
-		SpawnedActorRef->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), SocketToAttach);
-	}
-}
-
 void ATopDownTestCharacter::RotateToLocation(const FVector& Location)
 {
 	const FRotator& FindLookAt = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Location);
 	FRotator LookAtRotation = FRotator(0.f, FindLookAt.Yaw, 0.f);
 	SetActorRotation(LookAtRotation);
+}
+
+void ATopDownTestCharacter::Attack()
+{
+	if (MainWeapon != nullptr)
+	{
+		MainWeapon->Attack();
+	}
 }

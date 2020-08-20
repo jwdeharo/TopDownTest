@@ -24,6 +24,11 @@ void ATopDownTestPlayerController::PlayerTick(float DeltaTime)
 	if (bCanRotateToLocation)
 	{
 		ChangePlayerRotation();
+		ATopDownTestCharacter* MyPawn = Cast<ATopDownTestCharacter>(GetPawn());
+		if (MyPawn != nullptr)
+		{
+			MyPawn->Attack();
+		}
 	}
 }
 
