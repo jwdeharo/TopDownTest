@@ -10,6 +10,8 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Weapons/BaseWeapon.h"
+#include "Weapons/GunWeapon.h"
 
 ATopDownTestCharacter::ATopDownTestCharacter()
 {
@@ -56,9 +58,16 @@ ATopDownTestCharacter::ATopDownTestCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
+void ATopDownTestCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	MainWeapon = AttachBlueprint<AGunWeapon>("GunSocket");
+	bCanAttack = false;
+}
+
 void ATopDownTestCharacter::Tick(float DeltaSeconds)
 {
-    Super::Tick(DeltaSeconds);
+	Super::Tick(DeltaSeconds);
 
 	if (CursorToWorld != nullptr)
 	{
@@ -86,6 +95,11 @@ void ATopDownTestCharacter::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
+
+	if (bCanAttack)
+	{
+		Attack();
+	}
 }
 
 void ATopDownTestCharacter::MoveForward(float AxisValue)
@@ -112,4 +126,17 @@ void ATopDownTestCharacter::RotateToLocation(const FVector& Location)
 	const FRotator& FindLookAt = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Location);
 	FRotator LookAtRotation = FRotator(0.f, FindLookAt.Yaw, 0.f);
 	SetActorRotation(LookAtRotation);
+}
+
+void ATopDownTestCharacter::Attack()
+{
+	if (MainWeapon != nullptr)
+	{
+		MainWeapon->Attack();
+	}
+}
+
+void ATopDownTestCharacter::SetCanAttack(bool CanAttack)
+{
+	bCanAttack = CanAttack;
 }

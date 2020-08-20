@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -14,8 +12,13 @@ class ATopDownTestCharacter : public ACharacter
 public:
 	ATopDownTestCharacter();
 
+	/**
+	* Function called at the begining of the game.
+	*/
+	void BeginPlay() override;
+
 	// Called every frame.
-	virtual void Tick(float DeltaSeconds) override;
+	void Tick(float DeltaSeconds) override;
 
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -42,6 +45,17 @@ public:
 	*/
 	void RotateToLocation(const FVector& Location);
 
+	/**
+	* Attacks using the main weapon.
+	*/
+	void Attack();
+
+	/**
+	* Sets if the character can or can't attack.
+	* @param CanAttack: true if the character can attack.
+	*/
+	void SetCanAttack(bool CanAttack);
+
 private:
 
 	/**
@@ -50,6 +64,18 @@ private:
 	* @param AxisType: Enum value that indicates the axis.
 	*/
 	void Move(float AxisValue, EAxis::Type AxisType);
+
+	/**
+	* Attach an object to a socket.
+	* @param SocketToAttach: socket to attach the object.
+	*/
+	template <typename T>
+	T* AttachBlueprint(const FName& SocketToAttach)
+	{
+		T* SpawnedActor = GetWorld()->SpawnActor<T>(T::StaticClass());
+		SpawnedActor->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), SocketToAttach);
+		return SpawnedActor;
+	}
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -62,5 +88,9 @@ private:
 	/** A decal that projects to the cursor location. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
+
+	UPROPERTY()
+	class ABaseWeapon* MainWeapon; //!< Main weapon of the character.
+	bool bCanAttack; //!< Indicates that the player can attack.
 };
 
