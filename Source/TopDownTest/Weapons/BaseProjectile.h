@@ -32,7 +32,10 @@ public:
 	void StartProjectile(const FVector& Direction);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	class UParticleSystemComponent* ParticleSystemComponent; //!< Particle system component.
+	class UParticleSystemComponent* IceShotParticleComponent; //!< Particle system component.
+
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	UParticleSystemComponent* IceExplosionParticleComponent; //!< Explosion once the shot hits something.
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	class USphereComponent* CollisionComponent; //!< Collision component, using a sphere.
@@ -59,4 +62,11 @@ private:
 	*/
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	/**
+	* Function called when a particle system is finished.
+	* @param PSystem: Particle that has finished.
+	*/
+	UFUNCTION()
+	void OnParticleSystemFinished(UParticleSystemComponent* PSystem);
 };

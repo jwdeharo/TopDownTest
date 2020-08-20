@@ -12,12 +12,19 @@ ABaseProjectile::ABaseProjectile()
 	RootComponent = CollisionComponent;
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem> IceProjectile(TEXT("/Game/InfinityBladeEffects/Effects/FX_Monsters/FX_Monster_Elemental/ICE/P_Elemental_Ice_Proj"));
-	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle System"));
-	ParticleSystemComponent->Template = IceProjectile.Object;
-	ParticleSystemComponent->bAutoActivate = true;
-	ParticleSystemComponent->AttachTo(RootComponent);
-	ParticleSystemComponent->SetRelativeLocation(FVector::ZeroVector);
+	IceShotParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Ice Shot Particle System"));
+	IceShotParticleComponent->Template = IceProjectile.Object;
+	IceShotParticleComponent->bAutoActivate = true;
+	IceShotParticleComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	IceShotParticleComponent->SetRelativeLocation(FVector::ZeroVector);
 
+	ConstructorHelpers::FObjectFinder<UParticleSystem> IceExplosion(TEXT("/Game/InfinityBladeEffects/Effects/FX_Monsters/FX_Monster_Elemental/ICE/P_Elemental_Proj_Impact_Ice"));
+	IceExplosionParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Ice Explosion Particle System"));
+	IceExplosionParticleComponent->Template = IceExplosion.Object;
+	IceExplosionParticleComponent->bAutoActivate = false;
+	IceExplosionParticleComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	IceExplosionParticleComponent->SetRelativeLocation(FVector::ZeroVector);
+	
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->bAutoActivate = true;
 	ProjectileMovementComponent->SetUpdatedComponent(CollisionComponent);
@@ -46,5 +53,17 @@ void ABaseProjectile::StartProjectile(const FVector& Direction)
 
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Destroy();
+	IceExplosionParticleComponent->OnSystemFinished.AddDynamic(this, &ABaseProjectile::OnParticleSystemFinished);
+	IceShotParticleComponent->SetVisibility(false, true);
+	IceShotParticleComponent->Deactivate();
+	ProjectileMovementComponent->Deactivate();
+	IceExplosionParticleComponent->Activate();
+}
+
+void ABaseProjectile::OnParticleSystemFinished(UParticleSystemComponent* PSystem)
+{
+	if (PSystem == IceExplosionParticleComponent)
+	{
+		Destroy();
+	}
 }
