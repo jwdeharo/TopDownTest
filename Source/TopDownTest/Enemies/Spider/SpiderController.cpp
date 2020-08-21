@@ -1,7 +1,8 @@
 #include "SpiderController.h"
 #include "SpiderAIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ASpiderController::ASpiderController()
 {
-	AIControllerClass = ASpiderAIController::StaticClass();
+	GetCharacterMovement()->MaxWalkSpeed = 260.f;
 }

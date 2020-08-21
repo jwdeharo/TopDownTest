@@ -1,13 +1,26 @@
 #include "SpiderAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "../BaseEnemy.h"
+#include "Kismet/GameplayStatics.h"
 
 ASpiderAIController::ASpiderAIController()
 {
-	ConstructorHelpers::FObjectFinder<UBehaviorTree> BehaviorTreeObject(TEXT("/Game/TopDownCPP/Blueprints/Enemies/Spider/SpiderBehaviorTree"));
-	BehaviourTree = BehaviorTreeObject.Object;
+	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
+	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
 }
 
-void ASpiderAIController::BeginPlay()
+void ASpiderAIController::OnPossess(APawn* InPawn)
 {
-	Super::BeginPlay();
+	Super::OnPossess(InPawn);
+	ABaseEnemy* Enemy = Cast<ABaseEnemy>(InPawn);
+
+	if (Enemy != nullptr && Enemy->BehaviourTree != nullptr)
+	{
+		BlackboardComponent->InitializeBlackboard(*Enemy->BehaviourTree->BlackboardAsset);
+		BehaviorTreeComponent->StartTree(*Enemy->BehaviourTree);
+		BlackboardComponent->SetValueAsObject("Player", UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn());
+	}
 }

@@ -13,14 +13,10 @@ class TOPDOWNTEST_API ABaseAIController : public AAIController
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY()
+	class UBlackboardComponent* BlackboardComponent; //!< Blackboard component.
 
 	UPROPERTY()
-	class UBehaviorTree* BehaviourTree;
-
-	UPROPERTY()
-	class UBlackboardData* BlackboardData;
-
-	UPROPERTY()
-	class UBlackboardComponent* BlackboardComponent;
+	class UBehaviorTreeComponent* BehaviorTreeComponent; //!< Behavior tree component.
 
 };

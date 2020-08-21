@@ -22,7 +22,7 @@ public:
 protected:
 
 	/** 
-	* Function called when controller begins play.
+	* Function called when the pawn has been possessed.
 	*/
-	void BeginPlay() override;
+	void OnPossess(APawn* InPawn) override;
 };
