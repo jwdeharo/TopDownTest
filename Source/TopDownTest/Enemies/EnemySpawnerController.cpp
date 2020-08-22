@@ -29,6 +29,11 @@ void AEnemySpawnerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AEnemySpawnerController::StopTimer()
+{
+	GetWorld()->GetTimerManager().ClearTimer(SpawnTimer);
+}
+
 void AEnemySpawnerController::StartTimer()
 {
 	float TimeToSpawn = FMath::RandRange(MinSpawnTime, MaxSpawnTime);

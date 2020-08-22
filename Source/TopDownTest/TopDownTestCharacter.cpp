@@ -12,6 +12,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Weapons/BaseWeapon.h"
 #include "Weapons/GunWeapon.h"
+#include "Kismet/GameplayStatics.h"
+#include "Enemies/BaseEnemy.h"
+#include "Enemies/EnemySpawnerController.h"
 
 ATopDownTestCharacter::ATopDownTestCharacter()
 {
@@ -150,6 +153,21 @@ void ATopDownTestCharacter::ReceiveDamage(float Potency)
 	}
 	else
 	{
+		TArray<AActor*> Spawners, ToDelete;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawnerController::StaticClass(), Spawners);
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseEnemy::StaticClass(), ToDelete);
+
+		for (AActor* Spawner : Spawners)
+		{
+			Cast<AEnemySpawnerController>(Spawner)->StopTimer();
+			Spawner->Destroy();
+		}
+
+		for (AActor* ActorToDelete : ToDelete)
+		{
+			ActorToDelete->Destroy();
+		}
+		MainWeapon->Destroy();
 		CurrentHealth = 0.f;
 	}
 }
