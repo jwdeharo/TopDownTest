@@ -2,6 +2,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "../Enemies/BaseEnemy.h"
 
 ABaseProjectile::ABaseProjectile()
 {
@@ -54,10 +55,18 @@ void ABaseProjectile::StartProjectile(const FVector& Direction)
 
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	SetActorEnableCollision(false);
+	CollisionComponent->OnComponentHit.Clear();
 	IceShotParticleComponent->SetVisibility(false, true);
 	IceShotParticleComponent->Deactivate();
 	ProjectileMovementComponent->Deactivate();
 	IceExplosionParticleComponent->Activate();
+	ABaseEnemy* Enemy = Cast<ABaseEnemy>(OtherActor);
+	if (Enemy != nullptr && !DamageActors.Contains(Enemy))
+	{
+		Enemy->ReceiveDamage(AttackPotency);
+		DamageActors.Add(Enemy);
+	}
 }
 
 void ABaseProjectile::OnParticleSystemFinished(UParticleSystemComponent* PSystem)

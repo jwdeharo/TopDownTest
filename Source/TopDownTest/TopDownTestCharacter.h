@@ -4,6 +4,8 @@
 #include "GameFramework/Character.h"
 #include "TopDownTestCharacter.generated.h"
 
+class ABaseWeapon;
+
 UCLASS(Blueprintable)
 class ATopDownTestCharacter : public ACharacter
 {
@@ -56,6 +58,32 @@ public:
 	*/
 	void SetCanAttack(bool CanAttack);
 
+	/**
+	* Receive damage with some potency.
+	* @param Potency: potency of the damage.
+	*/
+	void ReceiveDamage(float Potency);
+
+	/**
+	* Returns the current health.
+	* @return Current health.
+	*/
+	UFUNCTION(BlueprintCallable)
+	float GetCurrentHealth() const;
+
+	/**
+	* Returns the max health.
+	* @return Max Health.
+	*/
+	UFUNCTION(BlueprintCallable)
+	float GetMaxHealth() const;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Character Controller")
+	TSubclassOf<ABaseWeapon> MainWeaponType; //!< Main weapon of the character.
+
+	UPROPERTY(EditDefaultsOnly, Category = "Character Controller")
+	float MaxHealth; //!< Max health of the character.
+
 private:
 
 	/**
@@ -68,11 +96,12 @@ private:
 	/**
 	* Attach an object to a socket.
 	* @param SocketToAttach: socket to attach the object.
+	* @param ObjectToAttach: object type to attach.
 	*/
-	template <typename T>
-	T* AttachBlueprint(const FName& SocketToAttach)
+	template<typename T, typename V>
+	T* AttachBlueprint(const FName& SocketToAttach, TSubclassOf<V> ObjectToAttach)
 	{
-		T* SpawnedActor = GetWorld()->SpawnActor<T>(T::StaticClass());
+		T* SpawnedActor = GetWorld()->SpawnActor<T>(ObjectToAttach);
 		SpawnedActor->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), SocketToAttach);
 		return SpawnedActor;
 	}
@@ -90,7 +119,11 @@ private:
 	class UDecalComponent* CursorToWorld;
 
 	UPROPERTY()
-	class ABaseWeapon* MainWeapon; //!< Main weapon of the character.
+	ABaseWeapon* MainWeapon; //!< Main weapon of the character.
+
+	UPROPERTY(transient)
+	float CurrentHealth;	//!< Current health of the character.
+
 	bool bCanAttack; //!< Indicates that the player can attack.
 };
 

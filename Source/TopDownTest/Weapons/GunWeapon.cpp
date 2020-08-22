@@ -7,8 +7,6 @@
 AGunWeapon::AGunWeapon()
 {
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> GunMesh(TEXT("/Game/Demo/FPWeapon/Mesh/SK_FPGun"));
-	SkeletalMeshComponent->SetSkeletalMesh(GunMesh.Object);
 }
 
 void AGunWeapon::BeginPlay()
@@ -21,7 +19,7 @@ void AGunWeapon::Attack()
 {
 	if (CanAttack)
 	{
-		auto const BaseProj = GetWorld()->SpawnActor<ABaseProjectile>(ABaseProjectile::StaticClass(), SkeletalMeshComponent->GetSocketTransform("Muzzle"));
+		auto const BaseProj = GetWorld()->SpawnActor<ABaseProjectile>(IceProjectile, SkeletalMeshComponent->GetSocketTransform("Muzzle"));
 		BaseProj->StartProjectile(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn()->GetActorForwardVector());
 		GetWorld()->GetTimerManager().SetTimer(AttackTimerController, this, &AGunWeapon::OnAttackTimerEnded, 0.3f, true);
 		StopAttack();

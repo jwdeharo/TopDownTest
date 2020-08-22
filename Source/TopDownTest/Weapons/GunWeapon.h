@@ -4,6 +4,8 @@
 #include "BaseWeapon.h"
 #include "GunWeapon.generated.h"
 
+class ABaseProjectile;
+
 /**
  * Gun weapon that will throw ice projectiles. 
  */
@@ -43,6 +45,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	USkeletalMeshComponent* SkeletalMeshComponent; //!< Skeletal mesh component.
 
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	TSubclassOf<ABaseProjectile> IceProjectile;	//!< Ice projectile.
 
 private:
 
