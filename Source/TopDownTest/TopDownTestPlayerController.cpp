@@ -34,8 +34,30 @@ void ATopDownTestPlayerController::SetupInputComponent()
 	InputComponent->BindAxis("MoveForward", this, &ATopDownTestPlayerController::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATopDownTestPlayerController::MoveRight);
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ATopDownTestPlayerController::ChangeCanRotateLocation);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &ATopDownTestPlayerController::ChangeCanRotateLocation);
+	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ATopDownTestPlayerController::SetAttack);
+	InputComponent->BindAction("SetDestination", IE_Released, this, &ATopDownTestPlayerController::SetNotAttack);
+}
+
+void ATopDownTestPlayerController::SetAttack()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Set"));
+	bCanRotateToLocation = true;
+	ATopDownTestCharacter* MyPawn = Cast<ATopDownTestCharacter>(GetPawn());
+	if (MyPawn != nullptr)
+	{
+		MyPawn->SetCanAttack(bCanRotateToLocation);
+	}
+}
+
+void ATopDownTestPlayerController::SetNotAttack()
+{
+	UE_LOG(LogTemp, Warning, TEXT("NotSet"));
+	bCanRotateToLocation = false;
+	ATopDownTestCharacter* MyPawn = Cast<ATopDownTestCharacter>(GetPawn());
+	if (MyPawn != nullptr)
+	{
+		MyPawn->SetCanAttack(bCanRotateToLocation);
+	}
 }
 
 void ATopDownTestPlayerController::MoveForward(float AxisValue)

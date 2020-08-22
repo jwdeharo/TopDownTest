@@ -27,6 +27,11 @@ public:
 	*/
 	void Tick(float DeltaTime) override;
 
+	/**
+	* Stops the timer.
+	*/
+	void StopTimer();
+
 	UPROPERTY(EditDefaultsOnly, Category = "Enemy Spawner")
 	TSubclassOf<ABaseEnemy> EnemyToSpawn;	//!< Type of enemy that the spawner will spawn.
 

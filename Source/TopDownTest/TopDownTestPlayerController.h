@@ -35,6 +35,9 @@ protected:
 	*/
 	void SetupInputComponent() override;
 
+	void SetAttack();
+	void SetNotAttack();
+
 private:
 
 	/**
