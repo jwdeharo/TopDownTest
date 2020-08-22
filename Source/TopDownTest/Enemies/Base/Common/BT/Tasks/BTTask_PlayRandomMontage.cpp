@@ -5,7 +5,7 @@
 UBTTask_PlayRandomMontage::UBTTask_PlayRandomMontage(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	NodeName = "Play Attack";
+	NodeName = "Play Random Montage";
 	bCreateNodeInstance = true;
 
 	TimerDelegate = FTimerDelegate::CreateUObject(this, &UBTTask_PlayRandomMontage::OnMontageEnded);

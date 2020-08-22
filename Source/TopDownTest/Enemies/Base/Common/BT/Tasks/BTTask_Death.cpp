@@ -1,14 +1,14 @@
-#include "BTTask_Attack.h"
+#include "BTTask_Death.h"
 #include "../../../../BaseEnemy.h"
 #include "../../../BaseAIController.h"
 
-UBTTask_Attack::UBTTask_Attack(const FObjectInitializer& ObjectInitializer)
+UBTTask_Death::UBTTask_Death(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	NodeName = "Play Attack";
+	NodeName = "Play Death";
 }
 
-void UBTTask_Attack::OnMontageEnded()
+void UBTTask_Death::OnMontageEnded()
 {
 	ABaseAIController* AIController = Cast<ABaseAIController>(MyOwnerComp->GetAIOwner());
 	if (AIController != nullptr)
@@ -16,10 +16,7 @@ void UBTTask_Attack::OnMontageEnded()
 		ABaseEnemy* Enemy = Cast<ABaseEnemy>(AIController->GetPawn());
 		if (Enemy != nullptr)
 		{
-			Enemy->StopAttack();
-			Enemy->CleanDamageActors();
+			Enemy->Destroy();
 		}
 	}
-
-	Super::OnMontageEnded();
 }

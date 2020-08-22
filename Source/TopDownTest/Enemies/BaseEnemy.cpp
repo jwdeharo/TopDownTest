@@ -1,5 +1,7 @@
 #include "BaseEnemy.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "Components/CapsuleComponent.h"
 
 ABaseEnemy::ABaseEnemy()
 {
@@ -57,6 +59,8 @@ void ABaseEnemy::ReceiveDamage(float Potency)
 	else
 	{
 		CurrentHealth = 0.f;
+		SetActorEnableCollision(false);
+		OnDeath.Broadcast();
 	}
 }
 

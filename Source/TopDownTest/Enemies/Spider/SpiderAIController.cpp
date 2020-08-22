@@ -22,5 +22,13 @@ void ASpiderAIController::OnPossess(APawn* InPawn)
 		BlackboardComponent->InitializeBlackboard(*Enemy->BehaviourTree->BlackboardAsset);
 		BehaviorTreeComponent->StartTree(*Enemy->BehaviourTree);
 		BlackboardComponent->SetValueAsObject("Player", UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn());
+		BlackboardComponent->SetValueAsBool("HasToDie", false);
+		Enemy->OnDeath.AddUObject(this, &ASpiderAIController::OnDeath);
 	}
+}
+
+void ASpiderAIController::OnDeath()
+{
+	BlackboardComponent->SetValueAsBool("HasToDie", true);
+	StopMovement();
 }

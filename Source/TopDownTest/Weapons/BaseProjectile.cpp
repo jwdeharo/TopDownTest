@@ -55,6 +55,8 @@ void ABaseProjectile::StartProjectile(const FVector& Direction)
 
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	SetActorEnableCollision(false);
+	CollisionComponent->OnComponentHit.Clear();
 	IceShotParticleComponent->SetVisibility(false, true);
 	IceShotParticleComponent->Deactivate();
 	ProjectileMovementComponent->Deactivate();

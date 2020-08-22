@@ -19,29 +19,21 @@ void ASpiderController::Tick(float DeltaTime)
 		{
 			case EPartAttack::LeftArm:
 			{
-				FVector Origin = GetMesh()->GetSocketLocation("LeftAttackPoint1");
-				FVector End = GetMesh()->GetSocketLocation("LeftAttackPoint2");
-				DamagedActor = MeleeAttack(Origin, End);
+				DamagedActor = GetDamagedActor("LeftAttackPoint1", "LeftAttackPoint2");
 			}
 			break;
 			case EPartAttack::RightArm:
 			{
-				FVector Origin = GetMesh()->GetSocketLocation("RightAttackPoint1");
-				FVector End = GetMesh()->GetSocketLocation("RightAttackPoint2");
-				DamagedActor = MeleeAttack(Origin, End);
+				DamagedActor = GetDamagedActor("RightAttackPoint1", "RightAttackPoint2");
 			}
 			break;
 			case EPartAttack::BothArms:
 			{
-				FVector Origin = GetMesh()->GetSocketLocation("RightAttackPoint1");
-				FVector End = GetMesh()->GetSocketLocation("RightAttackPoint2");
-				DamagedActor = MeleeAttack(Origin, End);
+				DamagedActor = GetDamagedActor("RightAttackPoint1", "RightAttackPoint2");
 
 				if (DamagedActor == nullptr)
 				{
-					Origin = GetMesh()->GetSocketLocation("LeftAttackPoint1");
-					End = GetMesh()->GetSocketLocation("LeftAttackPoint2");
-					DamagedActor = MeleeAttack(Origin, End);
+					DamagedActor = GetDamagedActor("LeftAttackPoint1", "LeftAttackPoint2");
 				}
 			}
 			break;
@@ -65,7 +57,16 @@ AActor* const ASpiderController::MeleeAttack(const FVector& Origin, const FVecto
 	TArray<AActor*> ActorsToIgnore;
 	ETraceTypeQuery TraceObject = UEngineTypes::ConvertToTraceType(ECC_Pawn);
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseEnemy::StaticClass(), ActorsToIgnore);
-	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Origin, End, 5.f, TraceObject, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, Result, true);
+	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Origin, End, 5.f, TraceObject, false, ActorsToIgnore, EDrawDebugTrace::None, Result, true);
 
 	return Result.Actor.Get();
+}
+
+AActor* const ASpiderController::GetDamagedActor(const FString& Socket1, const FString& Socket2) const
+{
+	AActor* const DamagedActor = nullptr;
+	FVector Origin = GetMesh()->GetSocketLocation(*Socket1);
+	FVector End = GetMesh()->GetSocketLocation(*Socket2);
+
+	return MeleeAttack(Origin, End);
 }

@@ -31,4 +31,13 @@ public:
 	* @return Actor hitted.
 	*/
 	AActor* const MeleeAttack(const FVector& Origin, const FVector& End) const override;
+
+private:
+	/**
+	* Given the names of the sockets that control the sphere trace, it gets if the enemy has hit an enemy.
+	* @param Socket1: First socket name.
+	* @param Socket2: Second socket name.
+	*/
+	AActor* const GetDamagedActor(const FString& Socket1, const FString& Socket2) const;
+
 };

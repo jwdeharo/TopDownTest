@@ -42,9 +42,18 @@ void AEnemySpawnerController::OnSpawnTimerFinished()
 		FActorSpawnParameters SpawnParameters;
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-		GetWorld()->SpawnActor<ASpiderController>(EnemyToSpawn, CalculateSpawnedEnemyTransform(), SpawnParameters);
+		auto SpawnedEnemy = GetWorld()->SpawnActor<ASpiderController>(EnemyToSpawn, CalculateSpawnedEnemyTransform(), SpawnParameters);
+		SpawnedEnemy->OnDeath.AddUObject(this, &AEnemySpawnerController::OnDeath);
 		StartTimer();
 		++CurrentEnemiesNumber;
+	}
+}
+
+void AEnemySpawnerController::OnDeath()
+{
+	if (CurrentEnemiesNumber > 0)
+	{
+		--CurrentEnemiesNumber;
 	}
 }
 

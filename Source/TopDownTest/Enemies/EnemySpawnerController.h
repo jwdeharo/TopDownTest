@@ -62,6 +62,11 @@ private:
 	void OnSpawnTimerFinished();
 
 	/**
+	* Function called when a pawn dies.
+	*/
+	void OnDeath();
+
+	/**
 	* Calculates the spawn transform in the bound collision area.
 	* @return FTransform: transform of the spawned enemy.
 	*/

@@ -8,9 +8,11 @@
 UCLASS()
 class TOPDOWNTEST_API ABaseEnemy : public ACharacter
 {
+	DECLARE_EVENT(ABaseEnemy, FDeathSignature);
 	GENERATED_BODY()
 
 public:
+
 	/**
 	* Sets default values for this character's properties
 	*/ 
@@ -89,6 +91,8 @@ public:
 	* @param potency: potency of the damage.
 	*/
 	void ReceiveDamage(float Potency);
+
+	FDeathSignature OnDeath; //!< Event called once the enemy dies.
 
 protected:
 	bool IsAttacking;											//!< Indicates if we can attack.
