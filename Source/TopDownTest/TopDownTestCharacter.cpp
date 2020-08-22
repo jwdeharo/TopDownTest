@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "TopDownTestCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
@@ -11,6 +9,12 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Weapons/BaseWeapon.h"
+#include "Weapons/GunWeapon.h"
+#include "Kismet/GameplayStatics.h"
+#include "Enemies/BaseEnemy.h"
+#include "Enemies/EnemySpawnerController.h"
 
 ATopDownTestCharacter::ATopDownTestCharacter()
 {
@@ -57,9 +61,17 @@ ATopDownTestCharacter::ATopDownTestCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
+void ATopDownTestCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	MainWeapon = AttachBlueprint<AGunWeapon, ABaseWeapon>("GunSocket", MainWeaponType);
+	bCanAttack = false;
+	CurrentHealth = MaxHealth;
+}
+
 void ATopDownTestCharacter::Tick(float DeltaSeconds)
 {
-    Super::Tick(DeltaSeconds);
+	Super::Tick(DeltaSeconds);
 
 	if (CursorToWorld != nullptr)
 	{
@@ -87,4 +99,85 @@ void ATopDownTestCharacter::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
+
+	if (bCanAttack)
+	{
+		Attack();
+	}
+}
+
+void ATopDownTestCharacter::MoveForward(float AxisValue)
+{
+	Move(AxisValue, EAxis::X);
+}
+
+void ATopDownTestCharacter::MoveRight(float AxisValue)
+{
+	Move(AxisValue, EAxis::Y);
+}
+
+void ATopDownTestCharacter::Move(float AxisValue, EAxis::Type AxisType)
+{
+	FRotator Rotation = GetControlRotation();
+	FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
+
+	FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(AxisType);
+	AddMovementInput(Direction, AxisValue);
+}
+
+void ATopDownTestCharacter::RotateToLocation(const FVector& Location)
+{
+	const FRotator& FindLookAt = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Location);
+	FRotator LookAtRotation = FRotator(0.f, FindLookAt.Yaw, 0.f);
+	SetActorRotation(LookAtRotation);
+}
+
+void ATopDownTestCharacter::Attack()
+{
+	if (MainWeapon != nullptr)
+	{
+		MainWeapon->Attack();
+	}
+}
+
+void ATopDownTestCharacter::SetCanAttack(bool CanAttack)
+{
+	bCanAttack = CanAttack;
+}
+
+void ATopDownTestCharacter::ReceiveDamage(float Potency)
+{
+	if ((CurrentHealth - Potency) > 0.f)
+	{
+		CurrentHealth -= Potency;
+	}
+	else
+	{
+		TArray<AActor*> Spawners, ToDelete;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawnerController::StaticClass(), Spawners);
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseEnemy::StaticClass(), ToDelete);
+
+		for (AActor* Spawner : Spawners)
+		{
+			Cast<AEnemySpawnerController>(Spawner)->StopTimer();
+			Spawner->Destroy();
+		}
+
+		for (AActor* ActorToDelete : ToDelete)
+		{
+			ActorToDelete->Destroy();
+		}
+		MainWeapon->Destroy();
+		CurrentHealth = 0.f;
+	}
+}
+
+float ATopDownTestCharacter::GetCurrentHealth() const
+{
+	return CurrentHealth;
+}
+
+float ATopDownTestCharacter::GetMaxHealth() const
+{
+	return MaxHealth;
 }
