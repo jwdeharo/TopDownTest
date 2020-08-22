@@ -30,5 +30,6 @@ void ASpiderAIController::OnPossess(APawn* InPawn)
 void ASpiderAIController::OnDeath()
 {
 	BlackboardComponent->SetValueAsBool("HasToDie", true);
+	BehaviorTreeComponent->RestartTree();
 	StopMovement();
 }

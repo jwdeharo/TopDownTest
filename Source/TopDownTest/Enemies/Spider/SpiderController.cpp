@@ -7,7 +7,7 @@
 
 ASpiderController::ASpiderController()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 260.f;
+	GetCharacterMovement()->MaxWalkSpeed = 280.f;
 }
 
 void ASpiderController::Tick(float DeltaTime)

@@ -60,6 +60,7 @@ void ABaseEnemy::ReceiveDamage(float Potency)
 	{
 		CurrentHealth = 0.f;
 		SetActorEnableCollision(false);
+		StopAnimMontage();
 		OnDeath.Broadcast();
 	}
 }
