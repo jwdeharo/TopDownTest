@@ -61,8 +61,9 @@ ATopDownTestCharacter::ATopDownTestCharacter()
 void ATopDownTestCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	MainWeapon = AttachBlueprint<AGunWeapon>("GunSocket");
+	MainWeapon = AttachBlueprint<AGunWeapon, ABaseWeapon>("GunSocket", MainWeaponType);
 	bCanAttack = false;
+	CurrentHealth = MaxHealth;
 }
 
 void ATopDownTestCharacter::Tick(float DeltaSeconds)
@@ -139,4 +140,26 @@ void ATopDownTestCharacter::Attack()
 void ATopDownTestCharacter::SetCanAttack(bool CanAttack)
 {
 	bCanAttack = CanAttack;
+}
+
+void ATopDownTestCharacter::ReceiveDamage(float Potency)
+{
+	if ((CurrentHealth - Potency) > 0.f)
+	{
+		CurrentHealth -= Potency;
+	}
+	else
+	{
+		CurrentHealth = 0.f;
+	}
+}
+
+float ATopDownTestCharacter::GetCurrentHealth() const
+{
+	return CurrentHealth;
+}
+
+float ATopDownTestCharacter::GetMaxHealth() const
+{
+	return MaxHealth;
 }

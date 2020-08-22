@@ -2,6 +2,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "../Enemies/BaseEnemy.h"
 
 ABaseProjectile::ABaseProjectile()
 {
@@ -58,6 +59,12 @@ void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	IceShotParticleComponent->Deactivate();
 	ProjectileMovementComponent->Deactivate();
 	IceExplosionParticleComponent->Activate();
+	ABaseEnemy* Enemy = Cast<ABaseEnemy>(OtherActor);
+	if (Enemy != nullptr && !DamageActors.Contains(Enemy))
+	{
+		Enemy->ReceiveDamage(AttackPotency);
+		DamageActors.Add(Enemy);
+	}
 }
 
 void ABaseProjectile::OnParticleSystemFinished(UParticleSystemComponent* PSystem)

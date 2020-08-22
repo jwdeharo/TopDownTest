@@ -43,6 +43,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	class UProjectileMovementComponent* ProjectileMovementComponent; //!< Projectile movement component.
 
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	float AttackPotency; //!< Potency of the attack.
+
 protected:
 
 	/**
@@ -69,4 +72,6 @@ private:
 	*/
 	UFUNCTION()
 	void OnParticleSystemFinished(UParticleSystemComponent* PSystem);
+
+	TArray<AActor*> DamageActors; //!< Container with the damaged actors.
 };
